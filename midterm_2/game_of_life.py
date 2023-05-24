@@ -2,35 +2,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import colors
 
-size = 5
-global_grid = np.eye(size, dtype=int) + np.eye(size, dtype=int)[::-1]
-global_grid[size // 2, size // 2] = 1
+global_grid = np.eye(5, dtype=int) + np.eye(5, dtype=int)[::-1]
+global_grid[2, 2] = 1
+global_grid = np.pad(global_grid, (15, 15))
 
+size = 30 + 5 
 def update(grid):
     new_grid = np.zeros([size, size], dtype=int)
-    for x in range(size):
-        for y in range(size):
-            if x == 0 or y == 0 or x == size - 1 or y == size - 1:
-                new_grid[x, y] = 0 
+    temp_grid = np.pad(grid, (1, 1))
+    for x in range(1, size + 1):
+        for y in range(1, size + 1):
+            neighbour_count = temp_grid[x - 1, y - 1] + temp_grid[x - 1, y] + temp_grid[x - 1, y + 1] + temp_grid[x, y - 1] +\
+            temp_grid[x, y + 1] + temp_grid[x + 1, y - 1] + temp_grid[x + 1, y] + temp_grid[x + 1, y + 1]
+            if grid[x - 1, y - 1] == 1:
+                if neighbour_count == 2 or neighbour_count == 3:
+                    new_grid[x - 1, y - 1] = 1
             else:
-                neighbour_count = grid[x - 1, y - 1] + grid[x - 1, y] + grid[x - 1, y + 1] + grid[x, y - 1] +\
-                grid[x, y + 1] + grid[x + 1, y - 1] + grid[x + 1, y] + grid[x + 1, y + 1]
-                if grid[x, y] == 1:
-                    if neighbour_count == 2 or neighbour_count == 3:
-                        new_grid[x, y] = 1
-                else:
-                    if neighbour_count == 3:
-                        new_grid[x, y] = 1
-
+                if neighbour_count == 3:
+                    new_grid[x - 1, y - 1] = 1
     global global_grid
     global_grid = new_grid
+
 
 fig, ax = plt.subplots()
 im = ax.imshow(global_grid, cmap=colors.ListedColormap(["black","white"]))
 fig.canvas.draw()
-plt.pause(0.5)
+plt.pause(1)
 while True:
     update(global_grid)
     im.set_data(global_grid)
     fig.canvas.draw()
-    plt.pause(0.1)
+    plt.pause(1)
+
+
+# for i in range(5):
+#     print(global_grid)
+#     update(global_grid)
