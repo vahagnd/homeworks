@@ -6,7 +6,8 @@ global_grid = np.eye(5, dtype=int) + np.eye(5, dtype=int)[::-1]
 global_grid[2, 2] = 1
 global_grid = np.pad(global_grid, (15, 15))
 
-size = 30 + 5 
+size = global_grid.shape[0]
+
 def update(grid):
     new_grid = np.zeros([size, size], dtype=int)
     temp_grid = np.pad(grid, (1, 1))
@@ -33,8 +34,3 @@ while True:
     im.set_data(global_grid)
     fig.canvas.draw()
     plt.pause(1)
-
-
-# for i in range(5):
-#     print(global_grid)
-#     update(global_grid)
